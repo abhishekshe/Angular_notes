@@ -1,0 +1,2031 @@
+1 ==========================module-level class==============================
+------------------------emp.ts------class--------------------------------
+
+
+console.log("emp callled");
+
+export class Emp {
+    constructor(){
+        console.log("constructor called");
+        
+    }
+
+    show(){
+        console.log("show called");
+        
+    }
+    name:string="abhishek"
+}
+
+---------------module.ts-------------------------------
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    AboutComponent,
+    
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    
+  ],
+  providers: [Emp],
+  bootstrap: [AppComponent]
+})
+
+2 ==============================/component-level class==============================
+
+------------------------emp.ts------class--------------------------------
+
+
+console.log("emp callled");
+
+export class Emp {
+    constructor(){
+        console.log("constructor called");
+        
+    }
+
+    show(){
+        console.log("show called");
+        
+    }
+    name:string="abhishek"
+}
+
+---------------app.ts-------------------------------
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+
+  viewProviders:[Emp]
+})
+
+
+
+
+=========================Parent to child=========================================================
+
+----------------------------------parent.html----------------------------------------------------
+<h1>Parent Comp</h1>
+
+<input type="text" #refVar (keypress)="0">
+
+<app-child [Cdata]="refVar.value"></app-child>
+------------------------------------child.ts--------------------------------------------------
+
+  @Input() Cdata:any
+-----------------------------------child.html---------------------------------------------------
+
+<h1>Child Comp</h1>
+
+{{Cdata}}
+
+=========================child to parent=========================================================
+
+----------------------------------parent.ts----------------------------------------------------
+export class AppComponent {
+  title = 'angular_2.0_codes';
+  Pdata:any
+
+  receiveData(Pdata:any){
+    this.Pdata=Pdata
+
+  }
+}
+
+----------------------------------parent.html----------------------------------------------------
+<h1>Parent Comp</h1>
+
+{{Pdata}}
+
+<app-child (ChData)="receiveData($event)"></app-child>
+
+------------------------------------child.ts--------------------------------------------------
+export class ChildComponent implements OnInit {
+
+  @Output() ChData = new EventEmitter()
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  sendData(Cdata:any){
+    this.ChData.emit(Cdata)
+
+  }
+
+}
+
+-----------------------------------child.html---------------------------------------------------
+
+<h1>Child Comp</h1>
+
+<input type="text" #refvar (keyup)="sendData(refvar.value)">
+
+
+=========================directive=========================================================
+
+---------------
+ngif
+---------------
+<div *ngIf="isUserLoggedIn">Welcome, {{ username }}!</div>
+
+
+------------------------------------------------------------
+
+ngfor
+<ul>
+  <li *ngFor="let item of items">{{ item }}</li>
+</ul>
+
+------------------------------------------------------------
+<div [ngStyle]="{ 'color': textColor, 'font-size': fontSize }">Styling Example</div>
+-------------------------------------------------------------------------------
+
+<div [ngClass]="{'highlight': isHighlighted, 'disabled': isDisabled }">Dynamic Class</div>
+
+---------------------------------------radio button -------------------------------------------------
+
+<h1>hello abhisje</h1>
+<input type="radio" name="rad" checked (click)="onchange(true)">TRUE
+<input type="radio" name="rad" (click)="onchange(false)">FALSE
+
+<div *ngIf="isvalid">
+    valid
+</div >
+<div *ngIf="!isvalid">
+    Invalid
+</div>
+
+
+----------------------ts------------------------------------
+
+export class AppComponent {
+  title = 'angular_codes';
+  isvalid=true
+  constructor() {
+  }
+  onchange(val:any){
+    this.isvalid=val
+
+  }
+}
+-------------------------male/female-------------------------------
+
+<h1>hello abhisje</h1>
+<input type="radio" name="rad" checked (click)="onchange('male')">MALE
+<input type="radio" name="rad" (click)="onchange('female')">FEMALE
+<input type="radio" name="rad" (click)="onchange('others')">OTHERS
+
+<div *ngIf="isvalid=='male'">
+    male
+</div >
+<div *ngIf="isvalid=='female'">
+    female
+</div>
+<div *ngIf="isvalid=='others'">
+    others
+</div>
+
+-------------promise async pipe-----------------------------------------------
+
+html
+
+
+<div *ngIf="realData | async as msg; else elseblock">
+
+    yor data : {{msg}}
+
+    
+
+</div>
+
+<ng-template #elseblock>
+    loading........
+ 
+</ng-template>
+
+
+
+--------------------------TS------------------------------
+
+ realData:Promise<string>
+
+  constructor(private _message:MessageService) {
+    this.realData=_message.getmessage()
+  }
+
+----------service-----------------
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MessageService {
+
+  constructor() { }
+
+  getmessage():Promise<string>{
+    let data = "hello abhishek"
+    return new Promise((res=>{
+      setTimeout(() => {
+        res(data)
+        
+      }, 3000);
+    }))
+
+  }
+}
+=====================================ngSwitch====================================================
+
+<input type="text" (keyup)="0" #refVar>
+
+<div [ngSwitch]="refVar.value">
+    <div *ngSwitchCase="'abhishek'">Hello Abhishek</div>
+    <div *ngSwitchCase="'nabi'">Hello nabi</div>
+    <div *ngSwitchCase="'tillu'">Hello tillu</div>
+    <div *ngSwitchCase="'simpy'">Hello simpy</div>
+    <div *ngSwitchCase="'kal'">Hello kal</div>
+
+</div>
+
+==================================================create custom directive====================================================================================================
+
+
+ng generate directive custom-directive
+----------------------------------------
+
+import { Directive, ElementRef, HostListener } from '@angular/core';
+
+@Directive({
+  selector: '[appCustomDirective]' // Use square brackets to define the selector.
+})
+export class CustomDirective {
+  constructor(private el: ElementRef) {
+    // Access the element to which the directive is applied using the ElementRef.
+    // You can manipulate the element or its properties here.
+    el.nativeElement.style.backgroundColor = 'yellow';
+  }
+
+  @HostListener('mouseenter') onMouseEnter() {
+    // This method is called when the mouse enters the element with the directive.
+    this.highlight('cyan');
+  }
+
+  @HostListener('mouseleave') onMouseLeave() {
+    // This method is called when the mouse leaves the element with the directive.
+    this.highlight(null);
+  }
+
+  private highlight(color: string | null) {
+    // A private helper method to set the background color of the element.
+    this.el.nativeElement.style.backgroundColor = color;
+  }
+}
+----------------------------------------------
+<div appCustomDirective>
+  Hover over me to see the effect of the custom directive!
+</div>
+------------------------------------------
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+import { CustomDirective } from './custom-directive.directive'; // Import the custom directive.
+
+@NgModule({
+  declarations: [AppComponent, CustomDirective], // Add the directive to the declarations array.
+  imports: [BrowserModule],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+=====================================data binding====================================================
+############################################ one wy data binding #####################################
+
+ INTERPOLATION
+ PROPERTY BINDING
+ CLASS BINDING 
+ ATTRIBUTE BINDING
+ STYLE BINDING
+=====================================interpolation====================================================
+
+export class MyComponent {
+  message = 'Hello, World!';
+}
+
+html
+----
+{{message}}
+=====================================property binding====================================================
+property binding
+
+app.ts
+
+export class MyComponent {
+  isDisabled: boolean = true;
+}
+
+app.html
+
+<button [disabled]="isDisabled">Click me!</button>
+
+=====================================class binding====================================================
+
+<div [class.special]="isSpecial">
+  This is a special element.
+</div>
+
+
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-example',
+  templateUrl: './example.component.html',
+  styleUrls: ['./example.component.css']
+})
+export class ExampleComponent {
+  isSpecial: boolean = true; // You can set this to true or false as needed.
+}
+
+
+---------------------------style binding----------------------------------------
+<button [style.color]="button ? 'red' : 'green'">click</button>
+<button (click)="clickme()">clickme</button>
+
+
+
+
+  button:boolean=true
+  
+  constructor() { }
+
+  clickme(){
+    this.button=!this.button
+  }
+
+=====================================two way data binding====================================================
+
+
+<input type="text" [(ngModel)]="username">
+<p>Welcome, {{ username }}!</p>
+
+----ts--------
+username: string = '';
+
+
+2. 
+==========================================================toggle============================
+
+<h1 [style.color]="isRed ? 'red' : 'pink'">Color Toggle Example</h1>
+<button (click)="toggleColor()">Toggle Color</button>
+-------------------------------------------ts-------------------------------------
+
+isRed: boolean = true;
+  constructor() {
+  
+  }
+
+  toggleColor() {
+    this.isRed = !this.isRed;
+  }
+  
+
+
+4.
+=========================parent to child array=========================================================
+
+-----------------------------p.ts------------------------------------------
+
+export class AppComponent {
+  title = 'angular_codes';
+
+  NamesArray:any = []
+
+  constructor() {
+  
+  }
+
+  ngOnInit(){
+    this.NamesArray.push("abhishek")
+    
+  }
+
+  AddNames(name:any){
+    this.NamesArray.push(name)
+
+  }
+  
+}
+
+----------------------------------------c.ts----------------------------------------------------------------------
+
+@Input() Pdata:any
+------------------------------------------c.html--------------------------------------------------------------------
+
+
+<h1>Child Component</h1>
+<h1 *ngFor="let names of Pdata">{{names}}</h1>
+----------------------------------------p.html------------------------------------------------------------------
+
+<h1>Parent Component</h1>
+<div>
+    Names : <input type="text" #refVar placeholder="Enter Names">
+
+    <button type="button" (click)="AddNames(refVar.value)">Add</button>
+
+    
+
+    <app-child [Pdata]="NamesArray"></app-child>
+</div>
+
+////////////2///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+5.
+==================================================Toggle component====================================================================================================
+
+
+export class AppComponent {
+  title = 'angular_codes';
+  IsShow:boolean = true
+  constructor() {
+  }
+  Toggle(){
+    this.IsShow = !this.IsShow
+  }
+}
+
+
+---------------------------------------------------------------------------
+
+<h1>Parent component</h1>
+<button type="button" (click)="Toggle()">hide/show</button>
+<app-child *ngIf="IsShow"></app-child>
+
+
+///////////////////////////////////////////////////////////////////////Services////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Services are commonly used to store data
+
+make HTTP calls
+
+The main idea behind a service is 
+to provide a simple way to share data between components and with the help of dependency 
+injection (DI) you can control how the instances of service are shared.
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService {
+
+  private data : string[] = ['abhishek','tillu','neeraj']
+
+  constructor() { }
+
+  getData(): string[] {
+    return this.data
+  }
+  
+}
+----------------------------------------------------------------------
+
+import { Component } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent {
+  title = 'angular_codes';
+ 
+  items: string[];
+  
+  constructor(private dataService: DataService) {
+    this.items=dataService.getData()
+  
+  }
+
+  
+
+}
+----------------------------------------------------------------------------
+
+<ul>
+      <li *ngFor="let item of items">{{ item }}</li>
+    </ul>
+
+______________________________________________________service 2  module level (singleton)___________________________________________________
+
+
+-----------------------------------------comp1.ts--------------------------------------------------------------
+export class Comp1Component implements OnInit {
+
+  constructor(private numlistService: NumlistService) { }
+
+  list1:number[]=[]
+
+  ngOnInit(): void {
+    this.list1= this.numlistService.getlist()
+  }
+
+  addNumber(val:any){
+    this.numlistService.addNum(val)
+    this.list1= this.numlistService.getlist()
+  }
+
+
+
+}
+-----------------------------------------comp1.html--------------------------------------------------------------
+<p>comp1 works!</p>
+
+<input type="text" #refVar />
+<button (click)="addNumber(refVar.value)">send</button>
+
+<h1 >
+    <ul>
+        <li *ngFor="let i of list1">
+            {{i}}
+
+        </li>
+       
+    </ul>
+</h1>
+-----------------------------------------comp2.ts--------------------------------------------------------------
+export class Comp2Component implements OnInit {
+
+  constructor(private numlistService: NumlistService) { }
+
+  list2:number[]=[]
+
+  ngOnInit(): void {
+    this.list2= this.numlistService.getlist()
+  }
+
+  addNumber(val:any){
+    this.numlistService.addNum(val)
+    this.list2= this.numlistService.getlist()
+  }
+
+}
+-----------------------------------------comp2.html------------------------------------------------------------
+<p>comp works!</p>
+
+<input type="text" #refVar />
+<button (click)="addNumber(refVar.value)">send</button>
+
+<h1 >
+    <ul>
+        <li *ngFor="let i of list2">
+            {{i}}
+
+        </li>
+       
+    </ul>
+</h1>
+
+-----------------------------------------numlistservice--------------------------------------------------------------
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NumlistService {
+
+  list:number[]=[100 ]
+
+  constructor() { }
+
+  public addNum(num:number){
+    this.list.push(num)
+  }
+  public getlist(){
+    return this.list
+  }
+}
+7.
+===================================================================  lifecyclehook  ============================================================================================
+
+======================================================================ngonchanges=============================================================================================
+ngOnChanges:
+
+@ Purpose: Called when the input properties of a component change.
+
+@ Detecting Changes:Common use cases for ngOnChanges include reacting to changes in input properties, updating internal state based on input changes, or triggering additional actions when specific properties change
+
+@ called only childs onchanges
+
+
+
+
+import { Component, Input, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-child',
+  templateUrl: './child.component.html',
+  styleUrls: ['./child.component.scss']
+})
+export class ChildComponent implements OnInit {
+
+  @Input() childData:any
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  ngOnChanges(){ 
+    console.log("called")
+  }
+
+
+}
+--------------------------------------------------------------parent.html---------------------------------------------------------------------------------------------------
+<div>
+    NAME : <input type="text" #refVar placeholder="enter your name" (keyup)="1">
+    <app-child [childData]="refVar.value"></app-child>
+</div>
+-------------------------------------------------------------------child.html--------------------------------------------------------------------------------
+
+Name: {{childData}}
+
+====================================================================== ngOnInit =============================================================================================
+
+@ Called once, after the component is initialized.
+
+@ called only one time
+
+@called on both parent and child
+
+@ called after ngOnchanges
+
+@we can aslo use for dependecy injection
+
+
+
+
+ngOnInit(): void {
+
+    console.log("child innit called");
+    
+  }
+
+====================================================================== ngDoCheck =============================================================================================
+
+@ ngDoCheck is a lifecycle hook that is called during every change detection cycle, allowing you to perform custom change detection and additional checks.
+
+@ Common use cases for ngDoCheck include scenarios where you need to track changes not captured by Angular's default change detection, such as changes within complex objects or third-party libraries.
+
+@ 
+ngDoCheck(): void {
+    console.log('ngDoCheck called');
+    // You can perform custom change detection logic here
+  }
+
+====================================================================== ngAfterContentInit ========================================================================================
+@  called when content is projected throgh <ng-content>, has been initialized
+
+@ we can access child component from parent by ContentChild
+
+@ 
+
+
+-------------------------------------------------------------------parent.html--------------------------------------------------------------------------------
+<h1>hi </h1>
+
+
+<ng-content> </ng-content>
+-------------------------------------------------------------------parent.ts--------------------------------------------------------------------------------
+import { Component, ContentChild, EventEmitter, Input, OnInit } from '@angular/core';
+import { ChildComponent } from '../child/child.component';
+
+@Component({
+  selector: 'app-parent',
+  templateUrl: './parent.component.html',
+  styleUrls: ['./parent.component.scss']
+})
+export class ParentComponent implements OnInit {
+  @ContentChild(ChildComponent) content : ChildComponent            //  child component se connect ho gaya
+  
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  ngAfterContentInit(){
+    
+    console.log(this.content.name)
+    
+    console.log(this.content.sum(2,4))
+
+    this.content.name='nabi'
+    console.log("parent content called")
+  }
+  ngAfterContentChecked(){
+    
+    
+    console.log("parent content checked called")
+  }
+
+}
+
+-------------------------------------------------------------------child.html--------------------------------------------------------------------------------
+<p>child works!</p>
+<h1>Name : {{name}}</h1>
+
+<input type="text" #refVar>
+
+<button type="button" (click)="NameChanged(refVar.value)">change</button>
+-------------------------------------------------------------------child.ts--------------------------------------------------------------------------------
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-child',
+  templateUrl: './child.component.html',
+  styleUrls: ['./child.component.scss']
+})
+export class ChildComponent implements OnInit {
+
+  name:string='abhishek'
+
+  constructor() { }
+
+  sum(a:number,b:number){
+    return a+b;
+
+
+  }
+  NameChanged(val:any){
+    this.name = val
+
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+
+-------------------------------------------------------------------app.html--------------------------------------------------------------------------------
+
+
+<app-parent>
+    <app-child></app-child>
+    
+</app-parent>
+
+
+-------------------------------------------------------------------child.ts--------------------------------------------------------------------------------
+export class ChildComponent implements OnInit {
+
+  name:string='Abhishek'
+
+  constructor() { }
+
+  sum(a:number,b:number){
+    return a+b;
+
+
+  }
+  NameChanged(val:any){
+    this.name=val
+
+  }
+  
+
+  ngOnInit(): void {
+  }
+
+
+-------------------------------------------------------------------child.html--------------------------------------------------------------------------------
+<p>child works!</p>
+<h1>Name : {{name}}</h1>
+
+<input type="text" #refVar>
+
+<button type="button" (click)="NameChanged(refVar.value)">change</button>
+
+
+==============================ViewChild===========================
+-------------------------------------------------------------------parent.ts--------------------------------------------------------------------------------
+export class ParentComponent implements OnInit {
+  @ViewChild(ChildComponent) ViewChild : ChildComponent
+
+  constructor(private cd: ChangeDetectorRef) {
+    
+  }
+  
+
+  ngOnInit(): void {
+  }
+
+
+  ngAfterViewInit(){
+
+    console.log(this.ViewChild.name)
+    console.log(this.ViewChild.name='nabui')
+
+    console.log(this.ViewChild.sum(2,5))
+    this.cd.detectChanges()
+  }
+-------------------------------------------------------------------parent.html--------------------------------------------------------------------------------
+<app-child></app-child>
+-------------------------------------------------------------------app.html--------------------------------------------------------------------------------
+<app-parent></app-parent>
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+8.
+
+
+9.
+========================================= HTTPCLIENT =====================================================
+
+
+--------------------------------------------------get/put/post/delete-------------------------------------------------------
+
+In Angular, "GET," "POST," "PUT," and "DELETE" are HTTP methods used to perform different types of operations on a server or API.
+
+GET (Read):
+
+The GET method is used to retrieve data from a server or API without modifying it.
+In Angular, you can use the HttpClient module to make GET requests.
+------------------------------------------------------------------------------------------------------
+
+POST (Create):
+The POST method is used to send data to a server to create a new resource.
+In Angular, you can use the HttpClient module to make POST requests.
+------------------------------------------------------------------------------------------------------
+
+PUT (Update):
+
+The PUT method is used to update an existing resource on the server with the provided data.
+In Angular, you can use the HttpClient module to make PUT requests.
+------------------------------------------------------------------------------------------------------
+
+DELETE (Delete):
+
+The DELETE method is used to request the removal of a resource on the server.
+In Angular, you can use the HttpClient module to make DELETE requests.
+
+
+--------------------------------get api data-----------------------------------
+---------------------------------service----------------------------------------
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LogoService {
+  private apiUrl = 'http://sahosoftweb.com/api/BrandLogo/GetAll';
+
+  constructor(private http: HttpClient) { }
+
+  getLogos(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+}
+---------------------------------component.ts------------------------
+
+export class AppComponent {
+  title = 'angular_codes';
+  logos: any[] = [];
+  
+  constructor(private logoService: LogoService) {
+  
+   }
+   ngOnInit(){
+    this.logoService.getLogos().subscribe((response:any)=>{
+      if (response.isSuccess) {
+        this.logos = response.data;
+      } else {
+        console.error('Error loading logos:', response.errors);
+      }
+    })
+
+   }
+  }
+
+---------------------------html---------------------------------------
+
+<div *ngFor="let logo of logos">
+    <h2>{{ logo.name }}</h2>
+    <img [src]="logo.imagePath" alt="{{ logo.name }}" />
+    <p>Status: {{ logo.status }}</p>
+    <p>Created On: {{ logo.createdOn }}</p>
+    <p>Modified On: {{ logo.modifiedOn }}</p>
+  </div>
+  
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++ http with inmemory web api +++++++++++++++++++++++++++++++++++++++++
+=================================================httpclient===============================================================================
+---------------------------------------------class--------------------------------------------
+import { Book } from "./book";
+import { InMemoryDbService } from 'angular-in-memory-web-api'
+
+export class Testdata implements InMemoryDbService{
+    createDb(){
+        let bookDetails: Book[] = [
+            {id:101, name:'angularjs', category:'learn', year:2010},
+            {id:102, name:'angular1', category:'learn1', year:2011},
+            {id:103, name:'angular2', category:'learn2', year:2012},
+            {id:104, name:'angular3', category:'learn3', year:2013},
+            {id:105, name:'angular4', category:'learn4', year:2014},
+        ];
+        return { books: bookDetails };
+    }
+}
+------------------------------------service---------------------------------------------------------
+
+import { Injectable } from '@angular/core';
+import { Book } from './book';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BookService {
+
+  private bookUrl="/api/books";
+
+
+  constructor(private _http:HttpClient) { 
+
+  }
+  getAllBooks():Observable<Book[]>{
+    return this._http.get<Book[]>(this.bookUrl);
+  }
+ }
+---------------------------------------interface------------------------------------------------------
+export interface Book {
+    id:number,
+    name:string,
+    category:string,
+    year:number
+}
+------------------------------------component--------------------------------------------------------
+
+import { Component, ElementRef } from '@angular/core';
+import { Book } from './book';
+import { BookService } from './book.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'practice_angular';
+
+  AllBooks:Book[]=[];
+
+  constructor(private _bookService:BookService){
+
+  }
+  ngOnInit(){
+    this.getmyAllBooks()
+    
+  }
+
+  getmyAllBooks(){
+    this._bookService.getAllBooks().subscribe(res=>
+      this.AllBooks=res
+  )}
+--------------------------------------------------------
+
+2.  this.AllBooks$=this._bookService.getAllBooks() /////// requesting json using httpclient.get using async pipe with Observable method
+-----------------------------------------------------------------
+}
+---------------------------------------html---------------------------------------------------------------
+
+<!-- <h1>requesting json using httpclient.get using subscribe method</h1> -->
+
+<div style="text-align: center;">
+    <h1>Welcome to sahosoft</h1>
+    <ul>
+        <li *ngFor="let book of AllBooks">
+            ID: {{book.id}} | Name: {{book.name}} | Category: {{book.category}} Year : {{book.year}}
+
+        </li>
+    </ul>
+
+</div>
+
+----------------------------------------------------------------------------------------------------
+<!-- <h1>requesting json using httpclient.get using async pipe with Observable method</h1> -->
+
+<ul>
+    <li *ngFor="let book of AllBooks$ | async ">
+        ID: {{book.id}} | Name : {{book.name}} | Category : {{book.category}} | Year : {{book.year}}
+    </li>
+</ul>
+
+====================================================responsetype========================================================================
+
+service par {responseType:'json'} update kar do remaining same hai
+
+return this._http.get<Book[]>(this.bookurl,{responseType:'json'})
+
+
+
+
+10.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++ RXJS +++++++++++++++++++++++++++++++++++++++++
+
+In the context of Angular, the term "subject" typically refers to an essential concept from the RxJS library, which Angular relies on heavily for handling asynchronous operations and managing data streams. RxJS stands for "Reactive Extensions for JavaScript," and it provides a set of powerful tools for working with asynchronous data streams.
+
+A Subject in RxJS is a special type of Observable that allows values to be multicasted to multiple Observers. This means that you can subscribe to a Subject from multiple parts of your application, and when the Subject emits a new value, all the subscribed Observers will receive that value. This is particularly useful for implementing various communication and data-sharing patterns in an Angular application.
+
+There are different types of Subjects in RxJS, including:
+
+BehaviorSubject: A BehaviorSubject is a type of Subject that always holds the most recent value and emits it immediately to new subscribers when they subscribe. It is commonly used to store and share the "current" or "initial" state in an application.
+
+ReplaySubject: A ReplaySubject remembers a specified number of previous values and emits them to new subscribers, ensuring that new subscribers receive a replay of the last N values.
+
+AsyncSubject: An AsyncSubject only emits its last value to subscribers when it completes. This can be useful in scenarios where you want to wait until an asynchronous operation is complete and then get the final result.
+
+Here's an example of how you might use a Be
+
+-----------------------------subject--------------------------------------------------
+
+Here's a simple explanation with an example:
+
+Imagine you have a button in your Angular app, and you want to notify other parts of your app whenever that button is clicked. You can use a "subject" to achieve this.
+
+1. First, import RxJS's Subject class:
+
+import { Subject } from 'rxjs';
+
+the message is received in real-time without needing to refresh the page?
+
+ It allows real-time communication between different parts of your Angular application, making it perfect for scenarios like chat applications, live notifications, and more.
+
+
+
+ngOnInit(){
+    const mySubject = new Subject();            // create an object of Subject and import rxjs
+
+    mySubject.next(1);                           // send the value 
+
+    mySubject.subscribe(res=> {
+      console.log("sub1" + res );                   //  receive the value
+    })
+
+    mySubject.next(2);
+    mySubject.next('abhishek')
+  } 
+
+
+
+-------------------------------------------------behavioursubject------------------------------------------------------
+BehaviorSubject and Observables are like a message delivery system in Angular. 
+They allow one component to send data, and other components to listen and react to that data in real-time.
+
+------------------------------------------------------------------------------
+
+const mySubject = new BehaviorSubject<any>('Ahishek')
+
+    mySubject.next('tillu')
+
+    const sub1 = mySubject.subscribe(res => {
+      console.log("subscription value :"  + res)
+    })
+
+    mySubject.next(2)
+
+--------------------------------ReplaySubject----------------------------------------------
+
+const mySubject = new ReplaySubject(2);
+
+    mySubject.next(2)
+    mySubject.next(3)
+    mySubject.next(4)
+    mySubject.next(5)
+    mySubject.next(6)
+
+    const sub1 = mySubject.subscribe(res => {
+        console.log("subscription value :"  + res)
+       })
+
+       mySubject.next('abhishek')
+
+  } 
+
+-----------------------------------AsObservable---------------------------------------------
+
+const mySubject = new Subject<number>();
+
+    const myObservable = mySubject.asObservable();
+    
+ 
+    myObservable.subscribe(
+      value => console.log('Received value:', value),
+      
+    );
+    
+   
+    mySubject.next(42);
+
+
+---------------------------------------paerent to child by behaviour subject-------------------------
+
+----------------------------------------parent.ts--------------------------------
+export class ParentComponent implements OnInit {
+  studentName: string = '';
+  
+  constructor(private _msgService:MsgService) { }
+
+
+  ngOnInit(){
+    this._msgService.name.subscribe(res=>
+      {
+        this.studentName=res;
+      })
+    
+
+  }
+  updateName(Name:string){
+    this._msgService.name.next(Name)
+  }
+  
+}
+----------------------------------------teacher.ts--------------------------------
+export class TeacherComponent implements OnInit {
+
+  studentName: string = '';
+  
+  constructor(private _msgService:MsgService) { }
+
+
+  ngOnInit(){
+    this._msgService.name.subscribe(res=>
+      {
+        this.studentName=res;
+      })
+    
+
+  }
+  updateName(Name:string){
+    this._msgService.name.next(Name)
+  }
+  
+
+}
+----------------------------------------student.ts--------------------------------
+export class StudentComponent implements OnInit {
+
+  studentName: string = '';
+  
+  constructor(private _msgService:MsgService) { }
+
+
+  ngOnInit(){
+    this._msgService.name.subscribe(res=>
+      {
+        this.studentName=res;
+      })
+    
+
+  }
+  updateName(Name:string){
+    this._msgService.name.next(Name)
+  }
+  
+----------------------------------------app.ts--------------------------------
+export class AppComponent {
+  title = 'angular_codes';
+  studentName: string = '';
+  
+  constructor(private _msgService:MsgService) { }
+
+
+  ngOnInit(){
+    this._msgService.name.subscribe(res=>
+      {
+        this.studentName=res;
+      })
+    
+
+  }
+  
+  
+----------------------------------------parent.html--------------------------------
+<div style="text-align: center;"><h1>student Name :{{studentName}}</h1>
+<br>
+<input type="text" placeholder="update data" #sName>
+
+<button type="button" (click)="updateName(sName.value)">update</button>
+</div>
+----------------------------------------teacher.html--------------------------------
+<div style="text-align: center;"><h1 style="color: blueviolet;">student Name :{{studentName}}</h1>
+    <br>
+    <input type="text" placeholder="update data" #sName>
+    
+    <button type="button" (click)="updateName(sName.value)">update</button>
+</div>
+----------------------------------------student.html--------------------------------
+<div style="text-align: center;"><h1 style="color: aqua;">student Name :{{studentName}}</h1>
+    <br>
+    <input type="text" placeholder="update data" #sName>
+    
+    <button type="button" (click)="updateName(sName.value)">update</button>
+</div>
+----------------------------------------app.html--------------------------------
+<div style="text-align: center;"><h1 style="color: aquamarine;">student Name :{{studentName}}</h1>
+    
+</div>
+
+<app-parent></app-parent>
+<app-student></app-student>
+<app-teacher></app-teacher>
+----------------------------------------service--------------------------------
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MsgService {
+  name = new BehaviorSubject("abhishek")
+
+//name = new BehaviorSubject("abhishek").asObservable();         //now next method wont works 
+
+  constructor() { }
+}
+
+11.
+======================================routing==================================================================
+
+
+------------------------app.routing------------------------------------------------
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { ContactComponent } from './contact/contact.component';
+import { AboutComponent } from './about/about.component';
+import { StudentComponent } from './student/student.component';
+import { StudentdetailsComponent } from './studentdetails/studentdetails.component';
+import { StudentregistrationComponent } from './studentregistration/studentregistration.component';
+import { ParentdetailsComponent } from './parentdetails/parentdetails.component';
+import { ContactdetailsComponent } from './contactdetails/contactdetails.component';
+import { BookComponent } from './book/book.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },   
+  { path: 'home', component: HomeComponent },
+  { path: 'contact', component: ContactComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'books', component:BookComponent },
+
+
+{path:'aboutus/:id', component:AboutusComponent},    //jab koi parameter bhi bhejna ho to property binding use karte hain
+
+
+
+
+{path:'**', component:NotfoundComponent}                 //page not found {built cart route}
+
+{path:'',redirectTo:'child',pathMatch:'full'}   redirect to child {default child par hi open hoga }
+  // {
+  //   path: 'student',
+  //   children: [
+  //     { path: '', component: StudentComponent },
+      
+  //     {  path: 'details',
+  //       children: [
+  //         {path:'',component:StudentdetailsComponent},
+  //         { path: 'parentdetails', component: ParentdetailsComponent },
+  //         { path: 'contactdetails', component: ContactdetailsComponent }
+  //       ]
+  //     },
+  //     { path: 'details', component: StudentdetailsComponent },
+  //     { path: 'registration', component: StudentregistrationComponent },
+  //   ]
+  // },
+  // {path:'details', component:StudentdetailsComponent},
+  // {path:'registration', component:StudentregistrationComponent},
+
+
+
+
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+------------------------guard-----------------------------------------
+In Angular, guards are used to protect and control the navigation flow within your application's routes. Guards are implemented as classes that can be associated with specific routes, and they perform checks or operations before allowing navigation to proceed. There are several types of guards in Angular:
+
+CanActivate: 
+---------------------------------------------app.html-----------------------------------------------------------------------------
+
+<div>
+
+    <h1>App component</h1>
+    <a routerLink="home">Home</a> |
+    <a routerLink="about">About</a> |
+    <a routerLink="contact">Contact</a> |
+    <a routerLink="student">student</a> |
+
+<a [routerLink]="['aboutus',101]">Aboutus 2</a> |     //// to get some parameter
+
+
+
+    <a routerLink="books">Book Master</a>
+//<a routerLink="page">Page</a>                             //builtcart route {page not found example}
+    <br>
+    <button (click)="gotoabout()">goto about</button>    ///by button we can navigate to other component //in app.ts
+    <router-outlet></router-outlet>
+    
+
+</div>
+
+'''''''''''''''''''''''''''''''''''''''''''''navigate by button''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+------------------------app.routing------------------------------------------------
+
+
+  {path:'dashboard/:id', component:DashboardComponent},
+
+---------------------------------------------------app.html----------------------------------------------------
+
+<button (click)="gotonext()">goto parent</button>
+--------------------------------------------------app.ts-----------------------------------------------
+
+  constructor(private _router:Router){}
+
+  ngOnInit(){
+    
+  }
+  gotonext(){
+    this._router.navigate(['parent'])
+
+
+ this.router.navigate(['dashboard',1202])   ///pass parameter by button
+
+
+
+  }
+
+//////////////////////////////////////////////////////canactivate///////////////////////////////////////////////////////////////////////////
+
+--------------------------auth.guard---------------------------
+
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor(private _router:Router){}
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+
+     let isLogin:Boolean=false
+
+     if(!isLogin){
+      alert("not login")
+      this._router.navigate(['parent'])
+     }
+    return true;
+  }
+  
+}
+-------------------------------routing--------------------------------
+
+const routes: Routes = [
+  
+  {path:'',redirectTo:'child',pathMatch:'full'},
+  {path:'parent', component:ParentComponent},
+  {path:'book', component:BookComponent,canActivate:[AuthGuard]},
+  {path:'bookdetails/:id', component:BookdetailsComponent},
+  {path:'bookdetails/:id/:price', component:BookdetailsComponent},
+
+/////////////////////////////////////////we take the book data and navigate to bookdetails with there id /////////////////////////////
+-----------------------book.service-----------------------------------
+import { Injectable } from '@angular/core';
+import { Book } from './book';
+import { Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BookService {
+
+  private BOOKS:Book[] = [
+    {id:101, name:'angularjs', price:1000, description:'first copy'},
+    {id:102, name:'angular1', price:2000, description:'second copy'},
+    {id:103, name:'angular2', price:1300, description:'third copy'},
+    {id:104, name:'angular3', price:1200, description:'fifth copy'},
+    {id:105, name:'angular4', price:1700, description:'last copy'},
+
+  ]
+
+  constructor() { }
+
+  getBooks():Observable<Book[]>{
+    return of(this.BOOKS);
+  }
+}
+--------------------book.interface.[to book datatype]------------------
+export class Book {
+
+    id:number;
+    name:string;
+    price:number;
+    description:string;
+}
+-------------------app.html-------------------------------
+<a routerLink="book">Book</a>
+--------------------------routing---------------------------
+
+  {path:'bookdetails/:id', component:BookdetailsComponent},
+--------------------------book.html-----------------------------
+<p>book works!</p>
+
+<ul>
+    <li *ngFor="let data of myAllBooks ">
+        ID: {{data.id}} | Name : {{data.name}}
+
+        <a [routerLink]="['/bookdetails',data.id]">showdetails</a>
+
+    </li>
+</ul>
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+12.
+=====================================================template form=====================================================
+
+----------------------------------------------temp.ts-----------------------------------------------------------------
+
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
+@Component({
+  selector: 'app-templateform',
+  templateUrl: './templateform.component.html',
+  styleUrls: ['./templateform.component.css']
+})
+export class TemplateformComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  Register(refData:NgForm){
+    console.log(refData.value)
+
+  }
+}
+-----------------------------------------temp.html--------------------------------------------------------------------------
+<h1 style="text-align: center; color: green;">template form</h1>
+<div>
+    <form #refData="ngForm" (ngSubmit)="Register(refData)">
+        <div>
+            First name : <input type="text" placeholder="enter name" name="firstname" ngModel>
+        </div>
+        <div>
+            Last name : <input type="text" placeholder="enter name" name="lastname" ngModel>
+        </div>
+        <div>
+            Email : <input type="text" placeholder="enter name" name="email" ngModel>
+       </div>
+        <div>
+            <input type="submit" value="Register" /> 
+        </div>
+        
+    </form>
+</div>
+
+--------------------------------------required--------------------------------------
+
+<!-- <div>
+            First name : <input type="text" placeholder="enter required name" name="firstname" ngModel>
+        </div> -->
+
+---------------first name is required---------------------------
+
+<div>
+            First name : <input type="text" placeholder="enter name" required name="firstname" #fname="ngModel" ngModel>
+            <span *ngIf="!fname.valid">firstname is required</span>
+        </div>
+
+--------------------------------disabled button untill valid form not filled -------
+
+   <div>
+            <input type="submit" value="Register" [disabled]="refData.valid" /> 
+        </div>
+
+
+--------------------------------------------------------app.html-------------------------------------------------
+
+<app-templateform></app-templateform>
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+13.
+=================================================httpclient===============================================================================
+---------------------------------------------class--------------------------------------------
+import { Book } from "./book";
+import { InMemoryDbService } from 'angular-in-memory-web-api'
+
+export class Testdata implements InMemoryDbService{
+    createDb(){
+        let bookDetails: Book[] = [
+            {id:101, name:'angularjs', category:'learn', year:2010},
+            {id:102, name:'angular1', category:'learn1', year:2011},
+            {id:103, name:'angular2', category:'learn2', year:2012},
+            {id:104, name:'angular3', category:'learn3', year:2013},
+            {id:105, name:'angular4', category:'learn4', year:2014},
+        ];
+        return { books: bookDetails };
+    }
+}
+------------------------------------service---------------------------------------------------------
+
+import { Injectable } from '@angular/core';
+import { Book } from './book';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BookService {
+
+  private bookUrl="/api/books";
+
+
+  constructor(private _http:HttpClient) { 
+
+  }
+  getAllBooks():Observable<Book[]>{
+    return this._http.get<Book[]>(this.bookUrl);
+  }
+ }
+---------------------------------------interface------------------------------------------------------
+export interface Book {
+    id:number,
+    name:string,
+    category:string,
+    year:number
+}
+------------------------------------component--------------------------------------------------------
+
+import { Component, ElementRef } from '@angular/core';
+import { Book } from './book';
+import { BookService } from './book.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'practice_angular';
+
+  AllBooks:Book[]=[];
+
+  constructor(private _bookService:BookService){
+
+  }
+  ngOnInit(){
+    this.getmyAllBooks()
+    
+  }
+
+  getmyAllBooks(){
+    this._bookService.getAllBooks().subscribe(res=>
+      this.AllBooks=res
+  )}
+--------------------------------------------------------
+
+2.  this.AllBooks$=this._bookService.getAllBooks() /////// requesting json using httpclient.get using async pipe with Observable method
+-----------------------------------------------------------------
+}
+---------------------------------------html---------------------------------------------------------------
+
+<!-- <h1>requesting json using httpclient.get using subscribe method</h1> -->
+
+<div style="text-align: center;">
+    <h1>Welcome to sahosoft</h1>
+    <ul>
+        <li *ngFor="let book of AllBooks">
+            ID: {{book.id}} | Name: {{book.name}} | Category: {{book.category}} Year : {{book.year}}
+
+        </li>
+    </ul>
+
+</div>
+
+----------------------------------------------------------------------------------------------------
+<!-- <h1>requesting json using httpclient.get using async pipe with Observable method</h1> -->
+
+<ul>
+    <li *ngFor="let book of AllBooks$ | async ">
+        ID: {{book.id}} | Name : {{book.name}} | Category : {{book.category}} | Year : {{book.year}}
+    </li>
+</ul>
+
+====================================================responsetype========================================================================
+
+service par {responseType:'json'} update kar do remaining same hai
+
+return this._http.get<Book[]>(this.bookurl,{responseType:'json'})
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++custom pipe+++++++++++++++++++++++++++++++++++++++++++++++
+
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'welcome'
+})
+export class WelcomePipe implements PipeTransform {
+
+  transform(value: any, ...args: any[]): any {
+    return "welcome : " +value;
+  }
+
+}
+-----------------------------------------------------------------------------------------
+
+<h1>{{name | welcome}}</h1>
+
+----------------------------------
+name = "abhishek"
+
+
+
+
+===================================================app level / comp level=======================================================
+
+------------------------------------------numservice------------------------------------------------------------------
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NumlistService {
+
+  list1:number[]=[100]
+
+  constructor() { 
+
+    console.log(this.list1)
+  }
+
+  addnum(num:number){
+    this.list1.push(num)  }
+
+  getdata(){
+    return this.list1
+  }
+
+
+}
+-------------------------------parent.ts-----------------------------------------------------------------
+
+ list2:number[]=[]
+
+
+  constructor(private _numlistService:NumlistService) {
+
+   }
+
+  ngOnInit(): void {
+    this.list2 = this._numlistService.getdata()
+  }
+  Addnumber(num1:any){
+    this._numlistService.addnum(num1)
+    
+  }
+-------------------------------child.ts-----------------------------------------------------------------
+
+ list2:number[]=[]
+
+
+  constructor(private _numlistService:NumlistService) {
+
+   }
+
+  ngOnInit(): void {
+    this.list2 = this._numlistService.getdata()
+  }
+  Addnumber(num1:any){
+    this._numlistService.addnum(num1)
+    
+  }
+
+-----------------------------p html ----------------------------------
+
+<h1 style="text-align: center; ">parent</h1>
+<input type="text" #refvar>
+
+<button  (click)="Addnumber(refvar.value)">add</button>
+
+<h1>{{list2}}</h1>
+
+<ul *ngFor="let data of list2">
+    
+        <h1>{{data}}</h1>
+
+    
+</ul>
+
+--------------------------c html-------------------------------------
+<div><h1 style="text-align: center; color: aqua;">Child</h1></div>
+<input type="text" #refvar>
+
+<button  (click)="Addnumber(refvar.value)">add</button>
+
+<h1>{{list2}}</h1>
+
+<ul *ngFor="let data of list2">
+    
+        <h1>{{data}}</h1>
+
+    
+</ul>
+
+=============================reactive form =============================================
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-my-form',
+  templateUrl: './my-form.component.html',
+  styleUrls: ['./my-form.component.css']
+})
+
+export class MyFormComponent implements OnInit {
+  myForm: FormGroup;
+  constructor(private fb: FormBuilder) {
+    this.myForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+    });
+  }
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
+  onSubmit() {
+    if (this.myForm.valid) {
+      console.log(this.myForm.value);
+    }
+  }
+}
+
+-------------------------------------html------------------------------------------------
+
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" formControlName="firstName">
+    </div>
+    <div>
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" formControlName="lastName">
+    </div>
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" formControlName="email">
+    </div>
+    <!-- Add more form controls as needed -->
+    <button type="submit" [disabled]="myForm.invalid">Submit</button>
+  </form>
+  
+
+
+=============================reactive form ajit sir =============================================
+
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+
+@Component({
+  selector: 'app-reactiveform',
+  templateUrl: './reactiveform.component.html',
+  styleUrls: ['./reactiveform.component.scss']
+})
+export class ReactiveformComponent implements OnInit {
+  regForm:any;
+
+
+  constructor() { }
+
+  ngOnInit(): void {
+    this.regForm = new FormGroup({
+      id: new FormControl(),
+      fname: new FormControl(),
+      lname: new FormControl(),
+      email: new FormControl(),
+      number: new FormControl(),
+    
+    });
+
+   
+   
+    
+  }
+  Register(formData:FormGroup){
+    // console.log(formData)
+    console.log(this.regForm.value)
+  }
+  
+}
+
+-------------------------------------------------------------
+<h1>reactive form</h1>
+<div>
+    <form [formGroup]="regForm" (ngSubmit)="Register(regForm)">
+        <div>
+            First name: <input type="text" placeholder="enter firstname " name="firstname" formControlName="fname">
+        </div>
+        <div>
+           Last name:  <input type="text" placeholder="enter lastname " name="lastname" formControlName="lname">
+        </div>
+        <div>
+             Email: <input type="text" placeholder="enter email " name="email" formControlName="email">
+        </div>
+        <div>
+            <button type="submit">Register</button>
+        </div>
+    </form>
+</div>
+
+----------------------------------------ts -----------------------------
+constructor(private _fb:FormBuilder) { }
+
+this.regForm = this._fb.group({
+      id: [''],
+      fname: [''],
+      lname: [''] ,
+      email: [''],
+      number: [''],
+    
+    });
+
+
+-------------------------validations-------------------
+<div>
+            Id: <input type="text" placeholder="enter email "  formControlName="id">
+            <div *ngIf="regForm.controls['id'].touched && !regForm.controls['id'].valid ">message is required</div>
+       </div>
+        <div>
+            First name: <input type="text" placeholder="enter firstname "  formControlName="fname">
+            
+            <div *ngIf="regForm.controls['fname'].touched && !regForm.controls['fname'].valid ">message is required</div>
+            
+        </div>
+        <div>
+           Last name:  <input type="text" placeholder="enter lastname "  formControlName="lname">
+           
+           <div *ngIf="regForm.controls['lname'].touched && !regForm.controls['lname'].valid ">message is required</div>
+        </div>
+        <div>
+             Email: <input type="text" placeholder="enter email "  formControlName="email">
+             
+            <div *ngIf="regForm.controls['email'].touched && !regForm.controls['email'].valid ">message is required</div>
+        </div>
+        <div>
+            Number: <input type="text" placeholder="enter email "  formControlName="number">
+            
+            <div *ngIf="regForm.controls['number'].touched && !regForm.controls['number'].valid ">message is required</div>
+       </div>---
+
+----------------------------------------------------------multiple validations-------------------------------
+
+
+      id: ['', [Validators.required, Validators.maxLength(5)]],
+
+
+
+==============================observable and subscribe=========================================
+
+
+--------------------------------app.ts---------------------------------
+export class AppComponent {
+
+  title = 'angular_revision';
+  myBooks:Book[]=[];
+
+  constructor(private _bookService:BookService){}
+
+  ngOnInit(){
+    this._bookService.getBooks().subscribe(obj=>this.myBooks=obj)
+  }
+
+
+}
+--------------------------------book.service---------------------------------
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Book } from './book';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BookService {
+  apiUrl="/api/books"
+
+  constructor(private _http:HttpClient) { 
+
+  }
+  getBooks(){
+    return this._http.get<Book[]>(this.apiUrl);
+  }
+}
+
+
+--------------------------------book.class---------------------------------
+export class Book {
+    id:number
+    name:string
+    category:string
+    year:number
+}
+
+--------------------------------testdata.class---------------------------------
+import { InMemoryDbService } from 'angular-in-memory-web-api';
+import { Book } from './book';
+export class Testdata implements InMemoryDbService{
+    createDb(){
+        let bookDetails: Book[] = [
+            {id:101, name:'angularjs', category:'learn', year:2010},
+            {id:102, name:'angular1', category:'learn1', year:2011},
+            {id:103, name:'angular2', category:'learn2', year:2012},
+            {id:104, name:'angular3', category:'learn3', year:2013},
+            {id:105, name:'angular4', category:'learn4', year:2014},
+        ];
+        return { books: bookDetails };
+    }
+}
+
+--------------------------------app.html---------------------------------
+<div style="text-align: center;">
+    <h1>Welcome to sahosoft</h1>
+    <ul>
+        <li *ngFor="let book of myBooks">
+            ID: {{book.id}} | Name: {{book.name}} | Category: {{book.category}} Year : {{book.year}}
+
+        </li>
+    </ul>
+
+</div>
+--------------------------------app.module---------------------------------
+@NgModule({
+  declarations: [
+    AppComponent,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    HttpClientInMemoryWebApiModule.forRoot(Testdata)
+  ],
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+. What is the difference between AOT and JIT?
+
+1.JIT stands for Just In Time, so with the name you can easily understand that it 
+compiles the code just in time means in the browser, while AOT stands for Ahead 
+of Time, so according to the name it compiles the code at the time of building.
+
+2- According to compilation, JIT loads the application slowly while AOT loads the 
+application faster than JIT.
+
+3- In case of JIT, Template Binding errors are shown at the time of showing the 
+application, while in case of AOT Template binding errors will show at the time of 
+building.
+
+4- In case of JIT, bundle size is more than AOT because in case of AOT the bundle 
+size is half of the JIT
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\feature module\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
